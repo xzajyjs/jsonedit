@@ -1,12 +1,13 @@
 // sw.js
-var cacheName = 'jsonedit.sunzsh';
+var cacheName = 'jsonedit.sunzsh.v6';
 var cacheFiles = [
     './',
     './?clipboard',
     './?none',
     './index.html',
-    './index.html?clipborad',
+    './index.html?clipboard',
     './index.html?none',
+    './pwa.webmanifest',
     './resources/img/jsoneditor-icons.svg',
     './resources/cache.js',
     './resources/jsoneditor.css',
@@ -14,6 +15,7 @@ var cacheFiles = [
     './resources/localforage.min.js',
     './resources/main.css',
     './resources/main.js',
+    './resources/pwa.js',
     './resources/toast.min.css',
     './resources/toast.min.js',
 ];

@@ -21,16 +21,39 @@
 4. 重构了自定义按钮的样式
 
 ## 使用方法
-> 由于chrome目前已经不支持app类型的插件上架应用商店了，所以只能下载源码后自己安装了（很简单）
-
+### 作为 Chrome 扩展使用
 1. 下载源码
-2. 在chrome中打开 `chrome://extensions`
-3. 右上角找到并开启“开发者模式”
-4. 将源码的根目录拖拽到chrome中（安装成功）
-5. 在chrome中打开 `chrome://apps` ，找到“JsonEditor” 单击打开
-6. 打开url中可以追加 `?clipboard` 自动加载剪切板里的json
-7. \[可选\] 方便以后进入，建议打开后，添加到收藏夹
-8. \[可选\] 可以配合安装 [alfred插件](https://github.com/sunzsh/favoritesWorkflow4Alfred/blob/main/jsonEditor.alfredworkflow) 快速打开（支持按住command自动加载剪切板内json）
+2. 在 Chrome 中打开 `chrome://extensions`
+3. 右上角开启“开发者模式”
+4. 点击“加载已解压的扩展程序”，选择源码根目录
+5. 在工具栏固定“JsonEditor”，点击图标打开编辑器
+
+### 作为网页/PWA 使用
+1. 在源码目录启动一个本地静态服务器，例如 `python3 -m http.server 8000`
+2. 在 Chrome 中打开 `http://localhost:8000`
+3. 可以在地址后追加 `?clipboard` 自动加载剪切板里的 json，例如 `http://localhost:8000/?clipboard`
+4. \[可选\] 方便以后进入，建议打开后添加到收藏夹，或通过浏览器安装为 PWA
+5. \[可选\] 可以配合安装 [alfred插件](https://github.com/sunzsh/favoritesWorkflow4Alfred/blob/main/jsonEditor.alfredworkflow) 快速打开（支持按住 command 自动加载剪切板内 json）
+
+### AI 格式化非规范 JSON
+1. 点击顶部工具栏的 `AI配置`
+2. 填写 OpenAPI 地址、模型名称和 API Key，默认地址为 `https://api.deepseek.com`，默认模型为 `deepseek-v4-flash`
+3. 将非规范 JSON 粘贴到编辑器
+4. 在 `代码` 模式下点击 `AI格式化`，程序会调用 AI 并把返回的合法 JSON 覆盖到当前编辑器
+
+AI 格式化使用的提示词为：
+
+```text
+帮我 json 格式化，只输出 json 格式的格式化后的内容即可，不要输出其他任何内容
+当前编辑器内容
+```
+
+API Key 只保存在当前浏览器的 localStorage 中，不会写入源码。
+
+### 历史记录
+1. 点击 `保存` 时可以输入保存名称
+2. 点击 `历史` 可以按“名称 - 年月日时分秒”查看最近 5 条保存记录
+3. 点击历史项本身会恢复该记录，点击历史项右侧展开菜单里的 `删除` 可以删除该记录
 
 ## 特别鸣谢
 * ★★★ 没有 [Jos de Jong](https://github.com/josdejong) 开源的 [josdejong/jsoneditor](https://github.com/josdejong/jsoneditor) ，就不会有这个小工具

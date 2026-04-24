@@ -1571,44 +1571,91 @@ var ModeSwitcher = /*#__PURE__*/function () {
 
     // 顶部菜单按钮-历史记录
 
-    const btnHistory = appendBtn('历史 ▾', '最后5次保存过的历史', '25px', '0px');
-    btnHistory.onclick = async (e) => {
-      var originItems = await cacheDao.getItem()
-      var historyItems = [];
-      for (let i = 0; i < originItems?.length; i++) {
-        let curItem = originItems[i]
-        let item = {
-          text: beautifyTime(curItem.timestamp),
-          title: beautifyTime(curItem.timestamp),
-          click: () => {
-            try{
-              window.JSONEditorInstance?.set(curItem.value)
-            }catch(err) {
-              
-            }
-          }
-        };
-        item.className = 'jsoneditor-type-modes';
-        historyItems.push(item);
-      } 
-      var menu = new _ContextMenu__WEBPACK_IMPORTED_MODULE_0__/* .ContextMenu */ .x(historyItems);
-      menu.show(btnHistory, container);
-      e.target.blur()
-    };
+	    const btnHistory = appendBtn('历史 ▾', '最后5次保存过的历史', '25px', '0px');
+		    btnHistory.onclick = async (e) => {
+		      var originItems = await cacheDao.getItem()
+		      var oldMenu = document.querySelector('.jsoneditor-history-menu-root')
+		      if (oldMenu) {
+		        oldMenu.parentNode.removeChild(oldMenu)
+		      }
+		      var menuRoot = document.createElement('div')
+		      menuRoot.className = 'jsoneditor-history-menu-root'
+		      var menuList = document.createElement('div')
+		      menuList.className = 'jsoneditor-history-menu'
+		      menuRoot.appendChild(menuList)
+		      document.body.appendChild(menuRoot)
+		      for (let i = 0; i < originItems?.length; i++) {
+		        let curItem = originItems[i]
+		        let timeText = beautifyTime(curItem.timestamp)
+		        let itemText = curItem.name ? curItem.name + ' - ' + timeText : timeText
+		        let row = document.createElement('div')
+		        row.className = 'jsoneditor-history-row'
+		        let restore = document.createElement('button')
+		        restore.type = 'button'
+		        restore.className = 'jsoneditor-history-restore'
+		        restore.textContent = itemText
+		        restore.title = itemText
+		        restore.onclick = () => {
+		          try{
+		            window.JSONEditorInstance?.set(curItem.value)
+		          }catch(err) {
+		            
+		          }
+		          menuRoot.parentNode.removeChild(menuRoot)
+		        }
+		        let remove = document.createElement('button')
+		        remove.type = 'button'
+		        remove.className = 'jsoneditor-history-delete'
+		        remove.textContent = '删除'
+		        remove.title = '删除这条历史'
+		        remove.onclick = async () => {
+		          await cacheDao.removeItem(i)
+		          menuRoot.parentNode.removeChild(menuRoot)
+		          toast('good','删除成功')
+		        }
+		        row.appendChild(restore)
+		        row.appendChild(remove)
+		        menuList.appendChild(row)
+		      } 
+		      if (!originItems?.length) {
+		        let empty = document.createElement('div')
+		        empty.className = 'jsoneditor-history-empty'
+		        empty.textContent = '暂无历史'
+		        menuList.appendChild(empty)
+		      }
+		      var rect = btnHistory.getBoundingClientRect()
+		      menuRoot.style.left = rect.left + 'px'
+		      menuRoot.style.top = rect.bottom + 'px'
+		      setTimeout(() => {
+		        document.addEventListener('mousedown', function closeHistoryMenu(event) {
+		          if (!menuRoot.contains(event.target) && event.target !== btnHistory) {
+		            if (menuRoot.parentNode) {
+		              menuRoot.parentNode.removeChild(menuRoot)
+		            }
+		            document.removeEventListener('mousedown', closeHistoryMenu)
+		          }
+		        })
+		      }, 0)
+	      e.target.blur()
+	    };
     
-    appendBtn('保存', '保存当前内容到历史记录', '0px').onclick = (e) => {
-      try{
-        let v = window.JSONEditorInstance?.get()
-        if(JSON.stringify(v) === '{}') {
+	    appendBtn('保存', '保存当前内容到历史记录', '0px').onclick = async (e) => {
+	      try{
+	        let v = window.JSONEditorInstance?.get()
+	        if(JSON.stringify(v) === '{}') {
           // 空数据不处理
-          toast('warn','无数据')
-          return
-        }
-        cacheDao.setItem(v)
-        toast('good','保存成功')
-      }catch(err) {
-        toast('warn','格式异常')
-      }
+	          toast('warn','无数据')
+	          return
+	        }
+	        let name = prompt('请输入保存名称（可选）', '')
+	        if (name === null) {
+	          return
+	        }
+	        await cacheDao.setItem(v, name.trim())
+	        toast('good','保存成功')
+	      }catch(err) {
+	        toast('warn','格式异常')
+	      }
       e.target.blur()
     }
 
@@ -7551,45 +7598,7 @@ textmode.create = function (container) {
       });
     }
 
-    if (this.mode === 'code') {
-      var powererByWrapper = document.createElement('div');
-      powererByWrapper.appendChild(document.createTextNode('powered by '));
-      powererByWrapper.className = 'jsoneditor-poweredBy';
-
-      var ace = document.createElement('a');
-      ace.appendChild(document.createTextNode('ace'));
-      ace.href = 'https://ace.c9.io/';
-      ace.target = '_blank';
-      // poweredBy.className = 'jsoneditor-poweredBy';
-
-      ace.onclick = function () {
-        // TODO: this anchor falls below the margin of the content,
-        // therefore the normal a.href does not work. We use a click event
-        // for now, but this should be fixed.
-        window.open(ace.href, ace.target, 'noreferrer');
-      };
-
-
-      var github_jsoneditor = document.createElement('a');
-      github_jsoneditor.appendChild(document.createTextNode('jsoneditor'));
-      github_jsoneditor.href = 'https://github.com/josdejong/jsoneditor';
-      github_jsoneditor.target = '_blank';
-      // poweredBy.className = 'jsoneditor-poweredBy';
-
-      github_jsoneditor.onclick = function () {
-        // TODO: this anchor falls below the margin of the content,
-        // therefore the normal a.href does not work. We use a click event
-        // for now, but this should be fixed.
-        window.open(github_jsoneditor.href, github_jsoneditor.target, 'noreferrer');
-      };
-
-      powererByWrapper.appendChild(github_jsoneditor)
-      powererByWrapper.appendChild(document.createTextNode(' , '));
-
-      powererByWrapper.appendChild(ace)
-      this.menu.appendChild(powererByWrapper);
-    }
-  }
+	  }
 
   var emptyNode = {};
   var isReadOnly = this.options.onEditable && _typeof(this.options.onEditable === 'function') && !this.options.onEditable(emptyNode);
