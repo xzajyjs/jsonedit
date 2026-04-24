@@ -1,5 +1,5 @@
 // sw.js
-var cacheName = 'jsonedit.sunzsh.v6';
+var cacheName = 'jsonedit.sunzsh.v11';
 var cacheFiles = [
     './',
     './?clipboard',

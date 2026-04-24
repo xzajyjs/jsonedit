@@ -55,6 +55,9 @@ API Key 只保存在当前浏览器的 localStorage 中，不会写入源码。
 2. 点击 `历史` 可以按“名称 - 年月日时分秒”查看最近 5 条保存记录
 3. 点击历史项本身会恢复该记录，点击历史项右侧展开菜单里的 `删除` 可以删除该记录
 
+### 外观主题
+页面会跟随 macOS / 浏览器的浅色或深色模式自动切换。
+
 ## 特别鸣谢
 * ★★★ 没有 [Jos de Jong](https://github.com/josdejong) 开源的 [josdejong/jsoneditor](https://github.com/josdejong/jsoneditor) ，就不会有这个小工具
 * [sungf](https://github.com/sungf) 、 [zhaoeryu](https://github.com/zhaoeryu)  贡献的源码提供了历史记录的功能
